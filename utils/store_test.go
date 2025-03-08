@@ -24,7 +24,7 @@ func TestStore(t *testing.T) {
 				offset int
 			})
 
-			store.Store(c.content, c.simHash, c.index)
+			Store(store, c.content, c.simHash, c.index)
 
 			entry, exists := store[c.simHash]
 			if !exists {
