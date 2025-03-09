@@ -5,6 +5,7 @@ import (
 	"flag"
 )
 
+// CheckFlags validates the flags passed to the program
 func CheckFlags(args []string) error {
 	fs := flag.NewFlagSet("textindex", flag.ContinueOnError)
 
