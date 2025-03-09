@@ -1,17 +1,15 @@
 package utils
 
-
-// CalculateSimHash generates a SimHash fingerprint from a list of features
-func SimHash(features []string) (simHash uint64) {
-	const hashBits = 8
-	weights := make([]float64, hashBits)
+func SimHash(features []string) uint64 {
+	const hashBits = 64 // Standard 64-bit hash
+	var weights [hashBits]int
 
 	for _, feature := range features {
 		featureHash := HashToken(feature)
 
-		// Update weights based on the feature hash
+		// Update weights based on feature hash
 		for i := 0; i < hashBits; i++ {
-			if (featureHash & (1 << i)) > 0 {
+			if (featureHash & (1 << i)) != 0 {
 				weights[i]++
 			} else {
 				weights[i]--
@@ -19,12 +17,13 @@ func SimHash(features []string) (simHash uint64) {
 		}
 	}
 
-	// Generate the final SimHash based on the weights
+	// Generate final SimHash
+	var simHash uint64
 	for i := 0; i < hashBits; i++ {
 		if weights[i] > 0 {
 			simHash |= (1 << i)
 		}
 	}
 
-	return
+	return simHash
 }
