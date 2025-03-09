@@ -5,50 +5,48 @@ import (
 	"os"
 	"testing"
 )
+type Data struct {
+	Name  string
+	Store map[uint64]Entry
+	FilePath string
+}
+
+var Cases = []Data {
+	{
+		Name: "Store and serialize map",
+		Store: map[uint64]Entry{
+			123456789: {Value: []byte("example content"), Offset: 42},
+		},
+		FilePath: "testdata/index.idx",
+	},
+
+}
 
 func TestStoreBinary(t *testing.T) {
-	cases := []struct {
-		name  string
-		store map[uint64]struct {
-			value  []byte
-			offset int
-		}
-		filePath string
-	}{
-		{
-			name: "Store and serialize map",
-			store: map[uint64]struct {
-				value  []byte
-				offset int
-			}{
-				123456789: {value: []byte("example content"), offset: 42},
-			},
-			filePath: "testdata/index.idx",
-		},
-	}
 
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
-			file, err := os.Create(c.filePath)
-			if err != nil {
-				t.Fatalf("failed to create file: %v", err)
-			}
-			defer os.Remove(c.filePath)
-			defer file.Close()
 
-			err = StoreBinary(c.store, file)
+	for _, c := range Cases {
+		t.Run(c.Name, func(t *testing.T) {
+			// file, err := os.Create(c.filePath)
+			// if err != nil {
+			// 	t.Fatalf("failed to create file: %v", err)
+			// }
+			// defer os.Remove(c.filePath)
+			// defer file.Close()
+
+			err := StoreBinary(c.Store, c.FilePath)
 			if err != nil {
-				t.Errorf("%s: unexpected error: %v", c.name, err)
+				t.Errorf("%s: unexpected error: %v", c.Name, err)
 			}
 
 			// Verify file is created
-			_, err = os.Stat(c.filePath)
+			_, err = os.Stat(c.FilePath)
 			if os.IsNotExist(err) {
-				t.Errorf("%s: expected file to be created, but it was not", c.name)
+				t.Errorf("%s: expected file to be created, but it was not", c.Name)
 			}
 
 			// Verify stored data
-			file, err = os.Open(c.filePath)
+			file, err := os.Open(c.FilePath)
 			if err != nil {
 				t.Fatalf("failed to open stored file: %v", err)
 			}
@@ -63,8 +61,8 @@ func TestStoreBinary(t *testing.T) {
 				t.Fatalf("failed to decode stored data: %v", err)
 			}
 
-			if len(loadedStore) != len(c.store) {
-				t.Errorf("%s: expected map size %d, got %d", c.name, len(c.store), len(loadedStore))
+			if len(loadedStore) != len(c.Store) {
+				t.Errorf("%s: expected map size %d, got %d", c.Name, len(c.Store), len(loadedStore))
 			}
 		})
 	}
