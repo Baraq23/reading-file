@@ -2,6 +2,8 @@ package utils
 
 import "hash/fnv"
 
-func HashToken(str string) uint64 {
-	return fnv.New64a().Sum64()
+func HashToken(feature string) uint64 {
+	hasher := fnv.New64a()
+	hasher.Write([]byte(feature))
+	return hasher.Sum64()
 }
