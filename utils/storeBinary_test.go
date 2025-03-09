@@ -27,13 +27,6 @@ func TestStoreBinary(t *testing.T) {
 
 	for _, c := range Cases {
 		t.Run(c.Name, func(t *testing.T) {
-			// file, err := os.Create(c.filePath)
-			// if err != nil {
-			// 	t.Fatalf("failed to create file: %v", err)
-			// }
-			// defer os.Remove(c.filePath)
-			// defer file.Close()
-
 			err := StoreBinary(c.Store, c.FilePath)
 			if err != nil {
 				t.Errorf("%s: unexpected error: %v", c.Name, err)

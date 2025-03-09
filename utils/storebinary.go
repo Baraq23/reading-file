@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/gob"
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -15,14 +16,14 @@ type Entry struct {
 func StoreBinary(indexed map[uint64]Entry, filePath string) error {
 
 	if filePath == "" {
-		filePath = "home/index.txt"
+		return fmt.Errorf("Filepath not provided.")
 	}
 
 	dir := filepath.Dir(filePath)
-	
+
 	if err := os.MkdirAll(dir, 0755); err != nil {
-        return err
-    }
+		return err
+	}
 	file, err := os.Create(filePath)
 	if err != nil {
 		return err
