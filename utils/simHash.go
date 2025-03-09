@@ -1,16 +1,30 @@
 package utils
 
-import (
-	"crypto/md5"
-)
 
-func SimHash(data []byte) (simhash uint64 ){
-	hash := md5.Sum(data) 
-	const n = 8
+// CalculateSimHash generates a SimHash fingerprint from a list of features
+func SimHash(features []string) (simHash uint64) {
+	const hashBits = 8
+	weights := make([]float64, hashBits)
 
-	for i := 0; i < n; i++ {
-		simhash |= uint64(hash[i]) << (i * n)
+	for _, feature := range features {
+		featureHash := HashToken(feature)
+
+		// Update weights based on the feature hash
+		for i := 0; i < hashBits; i++ {
+			if (featureHash & (1 << i)) > 0 {
+				weights[i]++
+			} else {
+				weights[i]--
+			}
+		}
 	}
-	
-	return 
+
+	// Generate the final SimHash based on the weights
+	for i := 0; i < hashBits; i++ {
+		if weights[i] > 0 {
+			simHash |= (1 << i)
+		}
+	}
+
+	return
 }
