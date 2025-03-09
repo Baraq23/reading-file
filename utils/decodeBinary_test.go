@@ -7,22 +7,16 @@ import (
 
 func TestDecodeBinary(t *testing.T) {
 	cases := []struct {
-		name   string
-		path   string
-		expect map[uint64]struct {
-			value  []byte
-			offset int
-		}
+		name      string
+		path      string
+		expect    map[uint64]Entry
 		expectErr error
 	}{
 		{
 			name: "Valid idx file",
 			path: "testdata/index.idx",
-			expect: map[uint64]struct {
-				value  []byte
-				offset int
-			}{
-				123456789: {value: []byte("example content"), offset: 42},
+			expect: map[uint64]Entry{
+				123456789: {[]byte("example content"), 42},
 			},
 			expectErr: nil,
 		},
@@ -57,11 +51,11 @@ func TestDecodeBinary(t *testing.T) {
 					if !exists {
 						t.Errorf("%s: expected key %d to exist, but it does not", c.name, key)
 					}
-					if string(resVal.value) != string(val.value) {
-						t.Errorf("%s: expected value %q, got %q", c.name, string(val.value), string(resVal.value))
+					if string(resVal.Value) != string(val.Value) {
+						t.Errorf("%s: expected value %q, got %q", c.name, string(val.Value), string(resVal.Value))
 					}
-					if resVal.offset != val.offset {
-						t.Errorf("%s: expected offset %d, got %d", c.name, val.offset, resVal.offset)
+					if resVal.Offset != val.Offset {
+						t.Errorf("%s: expected offset %d, got %d", c.name, val.Offset, resVal.Offset)
 					}
 				}
 			}
