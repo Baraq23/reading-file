@@ -30,11 +30,10 @@ func TestCheckMime(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			file, err := os.Open(c.path)
+			file, err := os.ReadFile(c.path)
 			if err != nil {
 				t.Fatalf("failed to open test file: %v", err)
 			}
-			defer file.Close()
 
 			check := CheckMime(file)
 			if (!check && c.expect) || (check && !c.expect) {
