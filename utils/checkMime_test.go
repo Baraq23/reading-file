@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"errors"
-	"mime/multipart"
 	"os"
 	"testing"
 )
@@ -11,22 +9,22 @@ func TestCheckMime(t *testing.T) {
 	cases := []struct {
 		name   string
 		path   string
-		expect error
+		expect bool
 	}{
 		{
 			name:   "Valid TXT file",
 			path:   "testdata/document.txt",
-			expect: nil,
+			expect: true,
 		},
 		{
 			name:   "Valid PDF file",
 			path:   "testdata/report.pdf",
-			expect: nil,
+			expect: true,
 		},
 		{
 			name:   "Invalid file type (JPEG)",
 			path:   "testdata/image.jpeg",
-			expect: errors.New("file not allowed"),
+			expect: false,
 		},
 	}
 
@@ -38,10 +36,9 @@ func TestCheckMime(t *testing.T) {
 			}
 			defer file.Close()
 
-			var multipartFile multipart.File = file
-			err = CheckMime(multipartFile)
-			if (err == nil && c.expect != nil) || (err != nil && c.expect == nil) || (err != nil && c.expect != nil && err.Error() != c.expect.Error()) {
-				t.Errorf("%s: expected error %v, got %v", c.name, c.expect, err)
+			check := CheckMime(file)
+			if (!check && c.expect) || (check && !c.expect) {
+				t.Errorf("%s: expected %v, got %v", c.name, c.expect, err)
 			}
 		})
 	}
